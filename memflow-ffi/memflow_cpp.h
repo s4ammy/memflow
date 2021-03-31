@@ -141,10 +141,10 @@ struct COsProcessInfo
 #endif
 };
 
-struct COsProcessModuleInfo
+struct c_os_process_module_info
     : BindDestr<OsProcessModuleInfoObj, os_process_module_free>
 {
-    COsProcessModuleInfo(OsProcessModuleInfoObj *modinfo)
+    c_os_process_module_info(OsProcessModuleInfoObj *modinfo)
         : BindDestr(modinfo) {}
 
     WRAP_FN(os_process_module, address);

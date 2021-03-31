@@ -15,13 +15,13 @@
 
 struct c_kernel;
 
-struct CWin32ModuleInfo
+struct c_win32_module_info
     : BindDestr<Win32ModuleInfo, module_info_free>
 {
-    CWin32ModuleInfo(Win32ModuleInfo *modinfo)
+    c_win32_module_info(Win32ModuleInfo *modinfo)
         : BindDestr(modinfo) {}
 
-    WRAP_FN_TYPE(COsProcessModuleInfo, module, info_trait);
+    WRAP_FN_TYPE(c_os_process_module_info, module, info_trait);
 };
 
 struct c_win32_process
@@ -32,7 +32,7 @@ struct c_win32_process
 
     c_win32_process(c_kernel &kernel, Win32ProcessInfo *info);
 
-    WRAP_FN_TYPE(CWin32ModuleInfo, process, module_info);
+    WRAP_FN_TYPE(c_win32_module_info, process, module_info);
     WRAP_FN_TYPE(c_virtual_memory, process, virt_mem);
 };
 
