@@ -11,17 +11,17 @@
 #endif
 #endif
 
-struct CConnectorInventory
+struct c_connector_inventory
     : BindDestr<ConnectorInventory, inventory_free>
 {
-    CConnectorInventory(ConnectorInventory *inv)
+    c_connector_inventory(ConnectorInventory *inv)
         : BindDestr(inv) {}
 
-    CConnectorInventory()
-        : CConnectorInventory(::inventory_scan()) {}
+    c_connector_inventory()
+        : c_connector_inventory(::inventory_scan()) {}
 
-    CConnectorInventory(const char *path)
-        : CConnectorInventory(::inventory_scan_path(path)) {}
+    c_connector_inventory(const char *path)
+        : c_connector_inventory(::inventory_scan_path(path)) {}
 
     WRAP_FN(inventory, add_dir);
     WRAP_FN(inventory, create_connector);
@@ -56,20 +56,20 @@ struct CPhysicalMemory
     }
 };
 
-struct CCloneablePhysicalMemory
+struct c_cloneable_physical_memory
     : BindDestr<CloneablePhysicalMemoryObj, connector_free>
 {
-    CCloneablePhysicalMemory(CloneablePhysicalMemoryObj *mem)
+    c_cloneable_physical_memory(CloneablePhysicalMemoryObj *mem)
         : BindDestr(mem) {}
 
     WRAP_FN(connector, clone);
     WRAP_FN_RAW_TYPE(CPhysicalMemory, downcast_cloneable);
 };
 
-struct CVirtualMemory
+struct c_virtual_memory
     : BindDestr<VirtualMemoryObj, virt_free>
 {
-    CVirtualMemory(VirtualMemoryObj *virt_mem)
+    c_virtual_memory(VirtualMemoryObj *virt_mem)
         : BindDestr(virt_mem) {}
 
     WRAP_FN_RAW(virt_read_raw_list);

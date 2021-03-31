@@ -13,7 +13,7 @@
 #endif
 #endif
 
-struct CKernel;
+struct c_kernel;
 
 struct CWin32ModuleInfo
     : BindDestr<Win32ModuleInfo, module_info_free>
@@ -24,22 +24,22 @@ struct CWin32ModuleInfo
     WRAP_FN_TYPE(COsProcessModuleInfo, module, info_trait);
 };
 
-struct CWin32Process
+struct c_win32_process
     : BindDestr<Win32Process, process_free>
 {
-    CWin32Process(Win32Process *process)
+    c_win32_process(Win32Process *process)
         : BindDestr(process) {}
 
-    CWin32Process(CKernel &kernel, Win32ProcessInfo *info);
+    c_win32_process(c_kernel &kernel, Win32ProcessInfo *info);
 
     WRAP_FN_TYPE(CWin32ModuleInfo, process, module_info);
-    WRAP_FN_TYPE(CVirtualMemory, process, virt_mem);
+    WRAP_FN_TYPE(c_virtual_memory, process, virt_mem);
 };
 
-struct CWin32ProcessInfo
+struct c_win32_processInfo
     : BindDestr<Win32ProcessInfo, process_info_free>
 {
-    CWin32ProcessInfo(Win32ProcessInfo *info)
+    c_win32_processInfo(Win32ProcessInfo *info)
         : BindDestr(info) {}
 
     WRAP_FN_TYPE(COsProcessInfo, process_info, trait);
@@ -59,17 +59,17 @@ struct CWin32ProcessInfo
     }
 };
 
-struct CKernel
+struct c_kernel
     : BindDestr<Kernel, kernel_free>
 {
-    CKernel(Kernel *kernel)
+    c_kernel(Kernel *kernel)
         : BindDestr(kernel) {}
 
-    CKernel(CCloneablePhysicalMemory &mem)
+    c_kernel(c_cloneable_physical_memory &mem)
         : BindDestr(kernel_build(mem.invalidate())) {}
 
-    CKernel(
-        CCloneablePhysicalMemory &mem,
+    c_kernel(
+        c_cloneable_physical_memory &mem,
         uint64_t page_cache_time_ms,
         PageType page_cache_flags,
         uintptr_t page_cache_size_kb,
@@ -84,20 +84,20 @@ struct CKernel
             vat_cache_entries
         )) {}
 
-    WRAP_FN_TYPE(CKernel, kernel, clone);
-    WRAP_FN_TYPE_INVALIDATE(CCloneablePhysicalMemory, kernel, destroy);
+    WRAP_FN_TYPE(c_kernel, kernel, clone);
+    WRAP_FN_TYPE_INVALIDATE(c_cloneable_physical_memory, kernel, destroy);
     WRAP_FN(kernel, start_block);
     WRAP_FN(kernel, winver);
     WRAP_FN(kernel, winver_unmasked);
     WRAP_FN(kernel, eprocess_list);
     WRAP_FN(kernel, process_info_list);
-    WRAP_FN_TYPE(CWin32ProcessInfo, kernel, kernel_process_info);
-    WRAP_FN_TYPE(CWin32ProcessInfo, kernel, process_info_from_eprocess);
-    WRAP_FN_TYPE(CWin32ProcessInfo, kernel, process_info);
-    WRAP_FN_TYPE(CWin32ProcessInfo, kernel, process_info_pid);
-    WRAP_FN_TYPE_INVALIDATE(CWin32Process, kernel, into_process);
-    WRAP_FN_TYPE_INVALIDATE(CWin32Process, kernel, into_process_pid);
-    WRAP_FN_TYPE_INVALIDATE(CWin32Process, kernel, into_kernel_process);
+    WRAP_FN_TYPE(c_win32_processInfo, kernel, kernel_process_info);
+    WRAP_FN_TYPE(c_win32_processInfo, kernel, process_info_from_eprocess);
+    WRAP_FN_TYPE(c_win32_processInfo, kernel, process_info);
+    WRAP_FN_TYPE(c_win32_processInfo, kernel, process_info_pid);
+    WRAP_FN_TYPE_INVALIDATE(c_win32_process, kernel, into_process);
+    WRAP_FN_TYPE_INVALIDATE(c_win32_process, kernel, into_process_pid);
+    WRAP_FN_TYPE_INVALIDATE(c_win32_process, kernel, into_kernel_process);
 
 #ifndef NO_STL_CONTAINERS
     // Manual eprocess_list impl
@@ -122,15 +122,15 @@ struct CKernel
     }
 
     // Manual process_info_list impl
-    std::vector<CWin32ProcessInfo> process_info_vec(size_t max_size) {
+    std::vector<c_win32_processInfo> process_info_vec(size_t max_size) {
         Win32ProcessInfo **buf = (Win32ProcessInfo **)malloc(sizeof(Win32ProcessInfo *) * max_size);
-        std::vector<CWin32ProcessInfo> ret;
+        std::vector<c_win32_processInfo> ret;
 
         if (buf) {
             size_t size = kernel_process_info_list(this->inner, buf, max_size);
 
             for (size_t i = 0; i < size; i++)
-                ret.push_back(CWin32ProcessInfo(buf[i]));
+                ret.push_back(c_win32_processInfo(buf[i]));
 
             free(buf);
         }
@@ -138,14 +138,14 @@ struct CKernel
         return ret;
     }
 
-    std::vector<CWin32ProcessInfo> process_info_vec() {
+    std::vector<c_win32_processInfo> process_info_vec() {
         return this->process_info_vec(AUTO_VEC_SIZE);
     }
 #endif
 };
 
 // Extra constructors we couldn't define inside the classes
-CWin32Process::CWin32Process(CKernel &kernel, Win32ProcessInfo *info)
+c_win32_process::c_win32_process(c_kernel &kernel, Win32ProcessInfo *info)
     : BindDestr(process_with_kernel(kernel.invalidate(), info)) {}
 
 #endif

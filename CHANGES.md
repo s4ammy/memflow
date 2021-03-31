@@ -16,7 +16,7 @@ Transitioning from C FFI to C++ FFI:
   - The headers still depend on `memflow.h`, and `memflow_win32.h`. They are just wrappers for safety, and ergonomics.
 - Types transition from `Type *` to `CType`. Every `CType` include automatic object destruction, so there is no need for the `type_free` methods.
 - `CType` contains a `Type *` inside. The pointer can still be `null`. Checking whether object is valid is still the same: `if (CType != NULL)`
-- Methods are implemented as class members. Most methods loose their prefix. The change looks like this: `process_module_info(Win32Process *process, const char *name)` becomes `CWin32Process::module_info(this, const char *name)`.
+- Methods are implemented as class members. Most methods loose their prefix. The change looks like this: `process_module_info(Win32Process *process, const char *name)` becomes `c_win32_process::module_info(this, const char *name)`.
   - Calling methods changes into calling a function on the object, instead of with the object. Example: `process_module_info(proc, "ntdll.dll")` becomes `proc.module_info("ntdll.dll")`.
   - Exception to this are `virt`, and `phys` read/write functions. They do not loose their prefix, because they do have the prefix in the Rust library. So, `virt_read_u64(mem, addr)` becomes `mem.virt_read_u64(addr)`.
 - There are extra convenience functions that utilize STL's `string`, and `vector` containers. Getting process/module names, and lists becomes much simpler.
