@@ -36,10 +36,10 @@ struct c_win32_process
     WRAP_FN_TYPE(c_virtual_memory, process, virt_mem);
 };
 
-struct c_win32_processInfo
+struct c_win32_process_info
     : BindDestr<Win32ProcessInfo, process_info_free>
 {
-    c_win32_processInfo(Win32ProcessInfo *info)
+    c_win32_process_info(Win32ProcessInfo *info)
         : BindDestr(info) {}
 
     WRAP_FN_TYPE(COsProcessInfo, process_info, trait);
@@ -91,10 +91,10 @@ struct c_kernel
     WRAP_FN(kernel, winver_unmasked);
     WRAP_FN(kernel, eprocess_list);
     WRAP_FN(kernel, process_info_list);
-    WRAP_FN_TYPE(c_win32_processInfo, kernel, kernel_process_info);
-    WRAP_FN_TYPE(c_win32_processInfo, kernel, process_info_from_eprocess);
-    WRAP_FN_TYPE(c_win32_processInfo, kernel, process_info);
-    WRAP_FN_TYPE(c_win32_processInfo, kernel, process_info_pid);
+    WRAP_FN_TYPE(c_win32_process_info, kernel, kernel_process_info);
+    WRAP_FN_TYPE(c_win32_process_info, kernel, process_info_from_eprocess);
+    WRAP_FN_TYPE(c_win32_process_info, kernel, process_info);
+    WRAP_FN_TYPE(c_win32_process_info, kernel, process_info_pid);
     WRAP_FN_TYPE_INVALIDATE(c_win32_process, kernel, into_process);
     WRAP_FN_TYPE_INVALIDATE(c_win32_process, kernel, into_process_pid);
     WRAP_FN_TYPE_INVALIDATE(c_win32_process, kernel, into_kernel_process);
@@ -122,15 +122,15 @@ struct c_kernel
     }
 
     // Manual process_info_list impl
-    std::vector<c_win32_processInfo> process_info_vec(size_t max_size) {
+    std::vector<c_win32_process_info> process_info_vec(size_t max_size) {
         Win32ProcessInfo **buf = (Win32ProcessInfo **)malloc(sizeof(Win32ProcessInfo *) * max_size);
-        std::vector<c_win32_processInfo> ret;
+        std::vector<c_win32_process_info> ret;
 
         if (buf) {
             size_t size = kernel_process_info_list(this->inner, buf, max_size);
 
             for (size_t i = 0; i < size; i++)
-                ret.push_back(c_win32_processInfo(buf[i]));
+                ret.push_back(c_win32_process_info(buf[i]));
 
             free(buf);
         }
@@ -138,7 +138,7 @@ struct c_kernel
         return ret;
     }
 
-    std::vector<c_win32_processInfo> process_info_vec() {
+    std::vector<c_win32_process_info> process_info_vec() {
         return this->process_info_vec(AUTO_VEC_SIZE);
     }
 #endif
