@@ -82,14 +82,14 @@ struct c_virtual_memory
     WRAP_FN_RAW(virt_write_u64);
 
     template<typename T>
-    T virt_read(Address address) {
+    T read(Address address) {
         T data;
         this->virt_read_raw_into(address, (uint8_t *)&data, sizeof(T));
         return data;
     }
 
     template<typename T>
-    int32_t virt_write(Address address, const T &data) {
+    int32_t write(Address address, const T &data) {
         return this->virt_write_raw(address, (const uint8_t *)&data, sizeof(T));
     }
 };
